@@ -1,0 +1,39 @@
+onBoot = '''/nix/store/fbi9r30p3lqk96lmw5b1v1bpbj62cr2l-inotify-tools-3.20.11.0/bin/inotifywait -rqme create --format=%f%w --include='\..+\.py.[0-9]+~' .|while
+read f
+do
+f=${f#.}
+o=
+r=
+while
+read -r l||[ "$l" ]
+do
+case $r
+in
+"")case $l
+in entrypoint*)m="${l%\"*\"}\"${f#*~./}${f%.*~*}\""
+case $m
+in
+"$l")break
+esac
+l=$m
+r=1
+esac
+esac
+o="$o$l
+"
+false
+done<.replit||echo -n "$o">.replit
+done'''
+
+
+
+entrypoint = "Recursion/Remove_Duplicates_E.py"
+modules = ["python-3.10:v18-20230807-322e88b"]
+
+hidden = [".pythonlibs"]
+
+[nix]
+channel = "stable-23_05"
+
+[deployment]
+run = ["sh", "-c", "python3 main.py"]
